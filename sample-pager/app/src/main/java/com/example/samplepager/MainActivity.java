@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         pager = findViewById(R.id.pager);
         pager.setOffscreenPageLimit(3);
         //미리 로딩해 놓을 아이템 개수를 3개로 늘림.
