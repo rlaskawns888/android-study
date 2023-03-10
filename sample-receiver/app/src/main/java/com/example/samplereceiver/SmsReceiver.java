@@ -8,10 +8,13 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class SmsReceiver extends BroadcastReceiver {
     public static final String TAG = "SmsReceiver";
+
+    public SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -34,11 +37,9 @@ public class SmsReceiver extends BroadcastReceiver {
             Date receivedDate = new Date(messages[0].getTimestampMillis());
             Log.i(TAG, "SMS received date: " + receivedDate.toString());
             //시간
-        }
 
-        // TODO: This method is called when the BroadcastReceiver is receiving
-        // an Intent broadcast.
-//        throw new UnsupportedOperationException("Not yet implemented");
+            sendToActivity(context, sender, contents, receivedDate);
+        }
     }
 
     //Build.VERSION_CODES.M : 마시멜로우
@@ -60,5 +61,19 @@ public class SmsReceiver extends BroadcastReceiver {
         }
 
         return messages;
+    }
+
+    private void sendToActivity(Context context, String sender, String contents, Date receivedDate) {
+        Intent myIntent = new Intent(context, SmsActivity.class);
+
+        myIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //FLAG_ACTIVITY_NEW_TASK: 수신자 화면이 없을 경우 플래그 추가
+        //FLAG_ACTIVITY_SINGLE_TOP: SmsAcvitity가 이미 메모리에 생성이 되어있을 경우, 해당 엑티비티를 재생성 하지 않도록 플래그 추가
+
+        myIntent.putExtra("sender", sender);
+        myIntent.putExtra("contents", contents);
+        myIntent.putExtra("receivedDate", format.format(receivedDate));
+
+        context.startActivity(myIntent);
     }
 }
